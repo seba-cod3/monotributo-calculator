@@ -1,9 +1,9 @@
-import { CurrencySelector } from "../CurrencySelector";
-import { ExchangeRateSelector } from "../ExchangeRateSelector";
-import { monotributoScales } from "../MonotributoCalculator";
-import { MonthlyInput } from "../MonthlyInput";
+import { monotributoScales } from "../../../lib/monotributoScales";
+import { CurrencySelector } from "./CurrencySelector";
+import { ExchangeRateSelector } from "./ExchangeRateSelector";
+import { MonthlyInput } from "./MonthlyInput";
 
-export const BillableData = ({
+const BillableData = ({
   monthlyIncome,
   setMonthlyIncome,
   setExchangeType,
@@ -66,3 +66,5 @@ export const BillableData = ({
     </div>
   );
 };
+
+export default BillableData;
