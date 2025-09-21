@@ -1,44 +1,102 @@
-import React, { useState } from 'react';
-import { BarChart3, TrendingUp, AlertTriangle, Calculator, Target } from 'lucide-react';
+import { exchangeRatesAtom } from "@/store/data";
+import { useAtomValue } from "jotai";
+import {
+  AlertTriangle,
+  BarChart3,
+  Calculator,
+  Target,
+  TrendingUp,
+} from "lucide-react";
+import { useState } from "react";
 
-interface ScaleCalculatorProps {
-  exchangeRates: {
-    oficial: number;
-    blue: number;
-    cripto: number;
-    mep: number;
-    loading: boolean;
-  };
-}
+export const ScaleCalculator = () => {
+  const exchangeRates = useAtomValue(exchangeRatesAtom);
 
-const ScaleCalculator: React.FC<ScaleCalculatorProps> = ({ exchangeRates }) => {
-  const [targetUSD, setTargetUSD] = useState<string>('3000');
-  const [currentScale, setCurrentScale] = useState<string>('C');
-  const [projectionMonths, setProjectionMonths] = useState<string>('12');
+  const [targetUSD, setTargetUSD] = useState<string>("3000");
+  const [currentScale, setCurrentScale] = useState<string>("C");
+  const [projectionMonths, setProjectionMonths] = useState<string>("12");
 
-  const monotributoScales = [
-    { scale: 'A', limit: 8992597.87, tax: 37085.74, color: 'bg-green-100 text-green-800' },
-    { scale: 'B', limit: 13175201.52, tax: 42216.41, color: 'bg-green-100 text-green-800' },
-    { scale: 'C', limit: 18473166.15, tax: 49435.58, color: 'bg-blue-100 text-blue-800' },
-    { scale: 'D', limit: 22934610.05, tax: 63357.80, color: 'bg-blue-100 text-blue-800' },
-    { scale: 'E', limit: 26977793.60, tax: 89714.31, color: 'bg-yellow-100 text-yellow-800' },
-    { scale: 'F', limit: 33809379.57, tax: 112906.59, color: 'bg-yellow-100 text-yellow-800' },
-    { scale: 'G', limit: 40431835.35, tax: 172457.38, color: 'bg-orange-100 text-orange-800' },
-    { scale: 'H', limit: 61344853.64, tax: 391400.62, color: 'bg-orange-100 text-orange-800' },
-    { scale: 'I', limit: 68664410.05, tax: 721650.46, color: 'bg-red-100 text-red-800' },
-    { scale: 'J', limit: 78632948.76, tax: 874069.29, color: 'bg-red-100 text-red-800' },
-    { scale: 'K', limit: 94805682.90, tax: 1208690.86, color: 'bg-red-100 text-red-800' }
+  const MONOTRIBUTO_SCALES = [
+    {
+      scale: "A",
+      limit: 8992597.87,
+      tax: 37085.74,
+      color: "bg-green-100 text-green-800",
+    },
+    {
+      scale: "B",
+      limit: 13175201.52,
+      tax: 42216.41,
+      color: "bg-green-100 text-green-800",
+    },
+    {
+      scale: "C",
+      limit: 18473166.15,
+      tax: 49435.58,
+      color: "bg-blue-100 text-blue-800",
+    },
+    {
+      scale: "D",
+      limit: 22934610.05,
+      tax: 63357.8,
+      color: "bg-blue-100 text-blue-800",
+    },
+    {
+      scale: "E",
+      limit: 26977793.6,
+      tax: 89714.31,
+      color: "bg-yellow-100 text-yellow-800",
+    },
+    {
+      scale: "F",
+      limit: 33809379.57,
+      tax: 112906.59,
+      color: "bg-yellow-100 text-yellow-800",
+    },
+    {
+      scale: "G",
+      limit: 40431835.35,
+      tax: 172457.38,
+      color: "bg-orange-100 text-orange-800",
+    },
+    {
+      scale: "H",
+      limit: 61344853.64,
+      tax: 391400.62,
+      color: "bg-orange-100 text-orange-800",
+    },
+    {
+      scale: "I",
+      limit: 68664410.05,
+      tax: 721650.46,
+      color: "bg-red-100 text-red-800",
+    },
+    {
+      scale: "J",
+      limit: 78632948.76,
+      tax: 874069.29,
+      color: "bg-red-100 text-red-800",
+    },
+    {
+      scale: "K",
+      limit: 94805682.9,
+      tax: 1208690.86,
+      color: "bg-red-100 text-red-800",
+    },
   ];
 
   const calculateMaxUSDForScale = (scale: string, exchangeRate: number) => {
-    const scaleData = monotributoScales.find(s => s.scale === scale);
+    const scaleData = MONOTRIBUTO_SCALES.find((s) => s.scale === scale);
     if (!scaleData) return 0;
     return Math.floor(scaleData.limit / (exchangeRate * 12));
   };
 
   const calculateRequiredScale = (monthlyUSD: number, exchangeRate: number) => {
     const annualPesos = monthlyUSD * exchangeRate * 12;
-    return monotributoScales.find(scale => annualPesos <= scale.limit) || monotributoScales[monotributoScales.length - 1];
+    return (
+      MONOTRIBUTO_SCALES.find((scale) => annualPesos <= scale.limit) ||
+      MONOTRIBUTO_SCALES[MONOTRIBUTO_SCALES.length - 1]
+    );
   };
 
   const generateProjection = () => {
@@ -50,15 +108,18 @@ const ScaleCalculator: React.FC<ScaleCalculatorProps> = ({ exchangeRates }) => {
       const monthlyAmount = monthlyUSD;
       const cumulativeUSD = monthlyAmount * i;
       const cumulativePesos = cumulativeUSD * exchangeRates.oficial;
-      const requiredScale = monotributoScales.find(scale => cumulativePesos <= scale.limit);
-      
+      const requiredScale = MONOTRIBUTO_SCALES.find(
+        (scale) => cumulativePesos <= scale.limit
+      );
+
       projection.push({
         month: i,
         monthlyUSD: monthlyAmount,
         cumulativeUSD,
         cumulativePesos,
-        requiredScale: requiredScale || monotributoScales[monotributoScales.length - 1],
-        exceeded: !requiredScale
+        requiredScale:
+          requiredScale || MONOTRIBUTO_SCALES[MONOTRIBUTO_SCALES.length - 1],
+        exceeded: !requiredScale,
       });
     }
 
@@ -72,19 +133,28 @@ const ScaleCalculator: React.FC<ScaleCalculatorProps> = ({ exchangeRates }) => {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h2 className="text-2xl font-bold text-gray-900">Planificador de Escalas</h2>
-        <p className="text-gray-600 mt-1">Proyecta tu crecimiento y planifica cambios de escala</p>
+        <h2 className="text-2xl font-bold text-gray-900">
+          Planificador de Escalas
+        </h2>
+        <p className="text-gray-600 mt-1">
+          Proyecta tu crecimiento y planifica cambios de escala
+        </p>
       </div>
 
       {/* Configuration Panel */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
           <div className="bg-white rounded-xl shadow-sm border p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-6">Configuración de Proyección</h3>
-            
+            <h3 className="text-lg font-semibold text-gray-900 mb-6">
+              Configuración de Proyección
+            </h3>
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
-                <label htmlFor="targetUSD" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="targetUSD"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   Objetivo mensual USD
                 </label>
                 <input
@@ -98,7 +168,10 @@ const ScaleCalculator: React.FC<ScaleCalculatorProps> = ({ exchangeRates }) => {
               </div>
 
               <div>
-                <label htmlFor="currentScale" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="currentScale"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   Escala actual
                 </label>
                 <select
@@ -107,7 +180,7 @@ const ScaleCalculator: React.FC<ScaleCalculatorProps> = ({ exchangeRates }) => {
                   onChange={(e) => setCurrentScale(e.target.value)}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 >
-                  {monotributoScales.map((scale) => (
+                  {MONOTRIBUTO_SCALES.map((scale) => (
                     <option key={scale.scale} value={scale.scale}>
                       Escala {scale.scale}
                     </option>
@@ -116,7 +189,10 @@ const ScaleCalculator: React.FC<ScaleCalculatorProps> = ({ exchangeRates }) => {
               </div>
 
               <div>
-                <label htmlFor="projectionMonths" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="projectionMonths"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   Proyección (meses)
                 </label>
                 <input
@@ -134,25 +210,37 @@ const ScaleCalculator: React.FC<ScaleCalculatorProps> = ({ exchangeRates }) => {
 
           {/* Scale Capacity Analysis */}
           <div className="mt-8 bg-white rounded-xl shadow-sm border p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-6">Capacidad por Escala</h3>
-            
+            <h3 className="text-lg font-semibold text-gray-900 mb-6">
+              Capacidad por Escala
+            </h3>
+
             <div className="space-y-4">
-              {monotributoScales.map((scale) => {
-                const maxUSDOfficial = calculateMaxUSDForScale(scale.scale, exchangeRates.oficial);
-                const maxUSDCripto = calculateMaxUSDForScale(scale.scale, exchangeRates.cripto);
+              {MONOTRIBUTO_SCALES.map((scale) => {
+                const maxUSDOfficial = calculateMaxUSDForScale(
+                  scale.scale,
+                  exchangeRates.oficial
+                );
+                const maxUSDCripto = calculateMaxUSDForScale(
+                  scale.scale,
+                  exchangeRates.cripto
+                );
                 const isCurrentScale = scale.scale === currentScale;
                 const canFitTarget = monthlyUSD <= maxUSDOfficial;
 
                 return (
-                  <div 
-                    key={scale.scale} 
+                  <div
+                    key={scale.scale}
                     className={`p-4 rounded-lg border-2 ${
-                      isCurrentScale ? 'border-blue-500 bg-blue-50' : 'border-gray-200'
+                      isCurrentScale
+                        ? "border-blue-500 bg-blue-50"
+                        : "border-gray-200"
                     }`}
                   >
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center space-x-3">
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${scale.color}`}>
+                        <span
+                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${scale.color}`}
+                        >
                           Escala {scale.scale}
                         </span>
                         {isCurrentScale && (
@@ -168,22 +256,33 @@ const ScaleCalculator: React.FC<ScaleCalculatorProps> = ({ exchangeRates }) => {
                         ${scale.tax.toLocaleString()}/mes
                       </div>
                     </div>
-                    
+
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div>
-                        <span className="text-gray-600">Máximo USD (oficial):</span>
-                        <span className="font-semibold ml-2">${maxUSDOfficial.toLocaleString()}</span>
+                        <span className="text-gray-600">
+                          Máximo USD (oficial):
+                        </span>
+                        <span className="font-semibold ml-2">
+                          ${maxUSDOfficial.toLocaleString()}
+                        </span>
                       </div>
                       <div>
-                        <span className="text-gray-600">Máximo USD (cripto):</span>
-                        <span className="font-semibold ml-2">${maxUSDCripto.toLocaleString()}</span>
+                        <span className="text-gray-600">
+                          Máximo USD (cripto):
+                        </span>
+                        <span className="font-semibold ml-2">
+                          ${maxUSDCripto.toLocaleString()}
+                        </span>
                       </div>
                     </div>
-                    
+
                     {!canFitTarget && monthlyUSD > 0 && (
                       <div className="mt-2 flex items-center space-x-2 text-red-600 text-sm">
                         <AlertTriangle className="h-4 w-4" />
-                        <span>Insuficiente para tu objetivo de ${monthlyUSD.toLocaleString()}/mes</span>
+                        <span>
+                          Insuficiente para tu objetivo de $
+                          {monthlyUSD.toLocaleString()}/mes
+                        </span>
                       </div>
                     )}
                   </div>
@@ -196,42 +295,69 @@ const ScaleCalculator: React.FC<ScaleCalculatorProps> = ({ exchangeRates }) => {
         {/* Quick Stats */}
         <div className="space-y-6">
           <div className="bg-white rounded-xl shadow-sm border p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Análisis Rápido</h3>
-            
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              Análisis Rápido
+            </h3>
+
             <div className="space-y-4">
               <div className="p-4 bg-green-50 rounded-lg">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-green-900">Escala Requerida</span>
+                  <span className="text-sm font-medium text-green-900">
+                    Escala Requerida
+                  </span>
                   <Calculator className="h-4 w-4 text-green-600" />
                 </div>
                 <div className="text-2xl font-bold text-green-600">
-                  {calculateRequiredScale(monthlyUSD, exchangeRates.oficial).scale}
+                  {
+                    calculateRequiredScale(monthlyUSD, exchangeRates.oficial)
+                      .scale
+                  }
                 </div>
                 <p className="text-xs text-green-700 mt-1">
                   Para ${monthlyUSD.toLocaleString()}/mes
                 </p>
               </div>
-              
+
               <div className="p-4 bg-blue-50 rounded-lg">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-blue-900">Impuesto Anual</span>
+                  <span className="text-sm font-medium text-blue-900">
+                    Impuesto Anual
+                  </span>
                   <TrendingUp className="h-4 w-4 text-blue-600" />
                 </div>
                 <div className="text-2xl font-bold text-blue-600">
-                  ${(calculateRequiredScale(monthlyUSD, exchangeRates.oficial).tax * 12).toLocaleString()}
+                  $
+                  {(
+                    calculateRequiredScale(monthlyUSD, exchangeRates.oficial)
+                      .tax * 12
+                  ).toLocaleString()}
                 </div>
                 <p className="text-xs text-blue-700 mt-1">
-                  {((calculateRequiredScale(monthlyUSD, exchangeRates.oficial).tax * 12) / (monthlyUSD * exchangeRates.oficial * 12) * 100).toFixed(1)}% de facturación
+                  {(
+                    ((calculateRequiredScale(monthlyUSD, exchangeRates.oficial)
+                      .tax *
+                      12) /
+                      (monthlyUSD * exchangeRates.oficial * 12)) *
+                    100
+                  ).toFixed(1)}
+                  % de facturación
                 </p>
               </div>
-              
+
               <div className="p-4 bg-orange-50 rounded-lg">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-orange-900">Margen Disponible</span>
+                  <span className="text-sm font-medium text-orange-900">
+                    Margen Disponible
+                  </span>
                   <BarChart3 className="h-4 w-4 text-orange-600" />
                 </div>
                 <div className="text-2xl font-bold text-orange-600">
-                  ${((calculateRequiredScale(monthlyUSD, exchangeRates.oficial).limit - (monthlyUSD * exchangeRates.oficial * 12))).toLocaleString()}
+                  $
+                  {(
+                    calculateRequiredScale(monthlyUSD, exchangeRates.oficial)
+                      .limit -
+                    monthlyUSD * exchangeRates.oficial * 12
+                  ).toLocaleString()}
                 </div>
                 <p className="text-xs text-orange-700 mt-1">
                   Espacio antes del límite
@@ -241,15 +367,16 @@ const ScaleCalculator: React.FC<ScaleCalculatorProps> = ({ exchangeRates }) => {
           </div>
 
           {/* Growth Warning */}
-          {projection.some(p => p.exceeded) && (
+          {projection.some((p) => p.exceeded) && (
             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
               <div className="flex items-center space-x-2 mb-2">
                 <AlertTriangle className="h-5 w-5 text-yellow-600" />
                 <span className="font-medium text-yellow-800">Atención</span>
               </div>
               <p className="text-sm text-yellow-700">
-                Con tu objetivo actual, excederás el límite del monotributo en el mes {projection.find(p => p.exceeded)?.month}. 
-                Considera ajustar tu estrategia o prepararte para el régimen general.
+                Con tu objetivo actual, excederás el límite del monotributo en
+                el mes {projection.find((p) => p.exceeded)?.month}. Considera
+                ajustar tu estrategia o prepararte para el régimen general.
               </p>
             </div>
           )}
@@ -259,12 +386,14 @@ const ScaleCalculator: React.FC<ScaleCalculatorProps> = ({ exchangeRates }) => {
       {/* Projection Timeline */}
       <div className="bg-white rounded-xl shadow-sm border">
         <div className="p-6 border-b">
-          <h3 className="text-lg font-semibold text-gray-900">Proyección de Crecimiento</h3>
+          <h3 className="text-lg font-semibold text-gray-900">
+            Proyección de Crecimiento
+          </h3>
           <p className="text-sm text-gray-600 mt-1">
             Evolución proyectada de tu facturación y escalas requeridas
           </p>
         </div>
-        
+
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50">
@@ -291,9 +420,9 @@ const ScaleCalculator: React.FC<ScaleCalculatorProps> = ({ exchangeRates }) => {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {projection.map((month) => (
-                <tr 
+                <tr
                   key={month.month}
-                  className={month.exceeded ? 'bg-red-50' : 'hover:bg-gray-50'}
+                  className={month.exceeded ? "bg-red-50" : "hover:bg-gray-50"}
                 >
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                     {month.month}
@@ -308,7 +437,9 @@ const ScaleCalculator: React.FC<ScaleCalculatorProps> = ({ exchangeRates }) => {
                     ${month.cumulativePesos.toLocaleString()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${month.requiredScale.color}`}>
+                    <span
+                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${month.requiredScale.color}`}
+                    >
                       {month.requiredScale.scale}
                     </span>
                   </td>
@@ -332,5 +463,3 @@ const ScaleCalculator: React.FC<ScaleCalculatorProps> = ({ exchangeRates }) => {
     </div>
   );
 };
-
-export default ScaleCalculator;

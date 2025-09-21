@@ -1,4 +1,12 @@
-export const monotributoScales = [
+import { CategoriaMonotributo } from "types/data";
+
+export type MonotributoScale = {
+  scale: CategoriaMonotributo;
+  limit: number;
+  tax: number;
+};
+
+export const MONOTRIBUTO_SCALES = [
   { scale: "A", limit: 8992597.87, tax: 37085.74 },
   { scale: "B", limit: 13175201.52, tax: 42216.41 },
   { scale: "C", limit: 18473166.15, tax: 49435.58 },
@@ -10,4 +18,4 @@ export const monotributoScales = [
   { scale: "I", limit: 68664410.05, tax: 721650.46 },
   { scale: "J", limit: 78632948.76, tax: 874069.29 },
   { scale: "K", limit: 94805682.9, tax: 1208690.86 },
-];
+] satisfies MonotributoScale[];

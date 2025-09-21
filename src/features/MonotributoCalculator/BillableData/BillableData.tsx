@@ -1,4 +1,4 @@
-import { monotributoScales } from "../../../lib/monotributoScales";
+import { MONOTRIBUTO_SCALES } from "lib/monotributoScales";
 import { CurrencySelector } from "./CurrencySelector";
 import { ExchangeRateSelector } from "./ExchangeRateSelector";
 import { MonthlyInput } from "./MonthlyInput";
@@ -15,7 +15,7 @@ const BillableData = ({
   setSelectedCurrency,
 }: any) => {
   return (
-    <div className="bg-white rounded-xl shadow-sm border p-6">
+    <div className="bg-white rounded-xl shadow-sm border p-6 h-full">
       <h3 className="text-lg font-semibold text-gray-900 mb-6">
         Datos de Facturación
       </h3>
@@ -55,7 +55,7 @@ const BillableData = ({
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
           >
             <option value="">Seleccionar escala actual</option>
-            {monotributoScales.map((scale) => (
+            {MONOTRIBUTO_SCALES.map((scale) => (
               <option key={scale.scale} value={scale.scale}>
                 Escala {scale.scale} - ${scale.tax.toLocaleString()}/mes
               </option>

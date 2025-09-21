@@ -1,1 +1,1 @@
-export { default } from "./MonotributoCalculator";
+export { MonotributoCalculator } from "./MonotributoCalculator";
