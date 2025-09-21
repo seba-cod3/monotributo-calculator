@@ -1,12 +1,11 @@
 import { useState } from "react";
-
+import { NavigationTabs } from "./NavigationTabs";
 import {
   ExchangeRates,
   MonotributoCalculator,
-  NavigationTabs,
   PaymentMethodGuide,
   ScaleCalculator,
-} from "features";
+} from "./Tabs";
 
 export const Router = ({
   fetchExchangeRates,

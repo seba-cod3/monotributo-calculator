@@ -22,3 +22,8 @@ export const exchangeRatesAtom = atomWithStorage<ExchangeRates>(
 );
 
 export const loadingAtom = atom(true);
+
+export const isCurrencyUSDAtom = atom(true, (get, set, nextValue?: boolean) => {
+  const current = get(isCurrencyUSDAtom);
+  set(isCurrencyUSDAtom, nextValue ?? !current);
+});

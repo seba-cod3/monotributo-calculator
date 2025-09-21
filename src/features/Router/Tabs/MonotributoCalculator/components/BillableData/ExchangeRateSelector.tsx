@@ -1,14 +1,18 @@
+import { exchangeRatesAtom, isCurrencyUSDAtom } from "@/store/data";
+import { useAtomValue } from "jotai";
 import { Dispatch, SetStateAction } from "react";
 
 export const ExchangeRateSelector = ({
   setExchangeType,
   exchangeType,
-  exchangeRates,
 }: {
   setExchangeType: Dispatch<SetStateAction<"oficial" | "blue" | "cripto">>;
   exchangeType: string;
-  exchangeRates: any;
 }) => {
+  const isCurrencyUSD = useAtomValue(isCurrencyUSDAtom);
+  const exchangeRates = useAtomValue(exchangeRatesAtom);
+
+  if (!isCurrencyUSD) return null;
   return (
     <div>
       <label className="block text-sm font-medium text-gray-700 mb-2">

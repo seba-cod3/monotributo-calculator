@@ -11,7 +11,7 @@ export type CategoriaMonotributo =
   | "J"
   | "K";
 
-type DolaresEnArgentina = {
+export type DolaresEnArgentina = {
   oficial: number;
   blue: number;
   cripto: number;
@@ -20,3 +20,5 @@ type DolaresEnArgentina = {
 export type ExchangeRates = {
   [Dolar in keyof DolaresEnArgentina]: number;
 };
+
+export type Currency = "usd" | "ars";

@@ -1,4 +1,7 @@
+import { CategoriaMonotributo } from "@/types/data";
+import { useAtom } from "jotai";
 import { MONOTRIBUTO_SCALES } from "lib/monotributoScales";
+import { currentScaleAtom } from "store/data";
 import { CurrencySelector } from "./CurrencySelector";
 import { ExchangeRateSelector } from "./ExchangeRateSelector";
 import { MonthlyInput } from "./MonthlyInput";
@@ -8,12 +11,8 @@ const BillableData = ({
   setMonthlyIncome,
   setExchangeType,
   exchangeType,
-  exchangeRates,
-  currentScale,
-  setCurrentScale,
-  selectedCurrency,
-  setSelectedCurrency,
 }: any) => {
+  const [currentScale, setCurrentScale] = useAtom(currentScaleAtom);
   return (
     <div className="bg-white rounded-xl shadow-sm border p-6 h-full">
       <h3 className="text-lg font-semibold text-gray-900 mb-6">
@@ -21,26 +20,17 @@ const BillableData = ({
       </h3>
 
       <div className="space-y-6">
-        <CurrencySelector
-          selectedCurrency={selectedCurrency}
-          setSelectedCurrency={setSelectedCurrency}
-        />
-        {/* Monthly USD Input */}
+        <CurrencySelector />
         <MonthlyInput
           monthlyIncome={monthlyIncome}
           setMonthlyIncome={setMonthlyIncome}
         />
 
-        {/* Exchange Rate Selection */}
-        {selectedCurrency === "usd" && (
-          <ExchangeRateSelector
-            setExchangeType={setExchangeType}
-            exchangeType={exchangeType}
-            exchangeRates={exchangeRates}
-          />
-        )}
+        <ExchangeRateSelector
+          setExchangeType={setExchangeType}
+          exchangeType={exchangeType}
+        />
 
-        {/* Current Scale Input */}
         <div>
           <label
             htmlFor="currentScale"
@@ -51,7 +41,9 @@ const BillableData = ({
           <select
             id="currentScale"
             value={currentScale}
-            onChange={(e) => setCurrentScale(e.target.value)}
+            onChange={(e) =>
+              setCurrentScale(e.target.value as CategoriaMonotributo)
+            }
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
           >
             <option value="">Seleccionar escala actual</option>

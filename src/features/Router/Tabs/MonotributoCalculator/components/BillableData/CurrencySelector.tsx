@@ -1,7 +1,9 @@
-export const CurrencySelector = ({
-  selectedCurrency,
-  setSelectedCurrency,
-}: any) => {
+import { isCurrencyUSDAtom } from "@/store/data";
+import { useAtom } from "jotai";
+
+export const CurrencySelector = () => {
+  const [isCurrencyUSD, toggleUSDCurrency] = useAtom(isCurrencyUSDAtom);
+
   return (
     <div className="space-y-6">
       <h3 className="text-sm font-medium text-gray-700 mb-2">
@@ -10,15 +12,13 @@ export const CurrencySelector = ({
       <div className="grid grid-cols-2 gap-4 w-full">
         <CurrencyOption
           label="USD"
-          value="usd"
-          selected={selectedCurrency === "usd"}
-          setSelectedCurrency={setSelectedCurrency}
+          selected={isCurrencyUSD}
+          toggleUSDCurrency={toggleUSDCurrency}
         />
         <CurrencyOption
           label="ARS"
-          value="ars"
-          selected={selectedCurrency === "ars"}
-          setSelectedCurrency={setSelectedCurrency}
+          selected={!isCurrencyUSD}
+          toggleUSDCurrency={toggleUSDCurrency}
         />
       </div>
     </div>
@@ -27,18 +27,16 @@ export const CurrencySelector = ({
 
 function CurrencyOption({
   label,
-  value,
   selected,
-  setSelectedCurrency,
+  toggleUSDCurrency,
 }: {
   label: string;
-  value: string;
   selected: boolean;
-  setSelectedCurrency: (value: string) => void;
+  toggleUSDCurrency: () => void;
 }) {
   return (
     <button
-      onClick={() => setSelectedCurrency(value)}
+      onClick={toggleUSDCurrency}
       className={`
       border border-gray-300 rounded-md p-2 transition-colors min-w-24 ${
         selected
