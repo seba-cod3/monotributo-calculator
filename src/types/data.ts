@@ -11,14 +11,23 @@ export type CategoriaMonotributo =
   | "J"
   | "K";
 
-export type DolaresEnArgentina = {
-  oficial: number;
-  blue: number;
-  cripto: number;
-  mep: number;
+export type TiposDeCambio =
+  | "oficial"
+  | "blue"
+  | "bolsa"
+  | "contadoconliqui"
+  | "mayorista"
+  | "cripto"
+  | "tarjeta";
+
+export type TiposDeCambioParaCalculo = "oficial" | "blue" | "cripto" | "mep";
+
+export type DolaresParaCalculo = {
+  [x in TiposDeCambioParaCalculo]: number;
 };
-export type ExchangeRates = {
-  [Dolar in keyof DolaresEnArgentina]: number;
+
+export type DolaresEnArgentina = {
+  [x in TiposDeCambio]: number;
 };
 
 export type Currency = "usd" | "ars";

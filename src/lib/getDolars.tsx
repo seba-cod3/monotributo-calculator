@@ -1,33 +1,30 @@
-type Casa =
-  | "oficial"
-  | "blue"
-  | "bolsa"
-  | "contadoconliqui"
-  | "mayorista"
-  | "cripto"
-  | "tarjeta";
+import { TiposDeCambio } from "@/types/data";
 
 type ExchangeType = {
+  casa: TiposDeCambio;
   compra: number;
   venta: number;
-  casa: Casa;
   nombre: string;
   moneda: string;
   fechaActualizacion: string;
 };
 
-export async function GetDolars(): Promise<ExchangeType[]> {
+export async function GetDolars({
+  abort,
+}: {
+  abort?: AbortSignal;
+}): Promise<ExchangeType[]> {
   const response = await easyFetch<ExchangeType[]>(
-    "https://dolarapi.com/v1/dolares"
+    "https://dolarapi.com/v1/dolares",
+    abort
   );
   return response;
 }
 
-async function easyFetch<T>(url: string): Promise<T> {
-  return fetch(url)
+async function easyFetch<T>(url: string, abort?: AbortSignal): Promise<T> {
+  return fetch(url, { signal: abort })
     .then((response) => response.json())
     .then((data) => {
-      console.log("Fetched data", data);
       return data;
     });
 }

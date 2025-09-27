@@ -1,6 +1,6 @@
 import { atom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
-import { CategoriaMonotributo, ExchangeRates } from "types/data";
+import { CategoriaMonotributo, DolaresParaCalculo } from "types/data";
 
 export const currentScaleAtom = atomWithStorage<CategoriaMonotributo | "">(
   "currentScale",
@@ -14,10 +14,9 @@ export const INITIAL_EXCHANGE_RATES = {
   blue: 0,
   cripto: 0,
   mep: 0,
-} satisfies ExchangeRates;
+} satisfies DolaresParaCalculo;
 
-export const exchangeRatesAtom = atomWithStorage<ExchangeRates>(
-  "exchangeRates",
+export const exchangeRatesAtom = atom<DolaresParaCalculo>(
   INITIAL_EXCHANGE_RATES
 );
 
@@ -28,7 +27,11 @@ export const isCurrencyUSDAtom = atom(true, (get, set, nextValue?: boolean) => {
   set(isCurrencyUSDAtom, nextValue ?? !current);
 });
 
-
 export const hasTaxInscriptionAtom = atom(false);
 
 export const billedLastSemesterAtom = atom<number>(0);
+export const monthlyIncomeAtom = atom<number>(0);
+
+export const exchangeTypeAtom = atom<keyof DolaresParaCalculo>(
+  "oficial" as const
+);

@@ -36,7 +36,7 @@ function CurrencyOption({
 }) {
   return (
     <button
-      onClick={() => toggleUSDCurrency()}
+      onClick={() => !selected && toggleUSDCurrency()}
       className={`
       border border-gray-300 rounded-md p-2 transition-colors min-w-24 ${
         selected

@@ -1,111 +1,29 @@
-import { useAtom, useAtomValue } from "jotai";
-import { useState } from "react";
+import { useAtom } from "jotai";
 
-import { MONOTRIBUTO_SCALES } from "lib/monotributoScales";
 import { AlertTriangle } from "lucide-react";
-import {
-  billedLastSemesterAtom,
-  exchangeRatesAtom,
-  hasTaxInscriptionAtom,
-  isCurrencyUSDAtom,
-} from "store/data";
+import { hasTaxInscriptionAtom } from "store/data";
 
+import { SectionTitle } from "@/components/SectionTitle";
 import BillableData from "./components/BillableData";
 import { MonotributoScalesTable } from "./components/MonotributoScalesTable";
 import { RecommendedScale } from "./components/RecommendedScale/RecommendedScale";
-
-export const useMonotributoCalculator = () => {
-  /* Suscriptions */
-  const exchangeRates = useAtomValue(exchangeRatesAtom);
-  const isCurrencyUSD = useAtomValue(isCurrencyUSDAtom);
-  const alreadyHasTaxInscription = useAtomValue(hasTaxInscriptionAtom);
-  const billedLastSemester = useAtomValue(billedLastSemesterAtom);
-
-  /* States */
-  const [monthlyIncome, setMonthlyIncome] = useState<string>("2000");
-  const [exchangeType, setExchangeType] = useState<
-    "oficial" | "blue" | "cripto"
-  >("oficial");
-
-  /* Functions */
-  const calculateAnnualARS = (subtractAlreadyBilled = true) => {
-    const monthlyValue = parseFloat(monthlyIncome) || 0;
-    if (isCurrencyUSD) {
-      const rate = exchangeRates[exchangeType] || 1;
-      const annualValue = monthlyValue * rate * 12;
-      if (!subtractAlreadyBilled) {
-        return annualValue
-      }
-      return annualValue + billedLastSemester;
-    } else {
-      const annualValue = monthlyValue * 12;
-      if (!subtractAlreadyBilled) {
-        return annualValue;
-      }
-      return annualValue + billedLastSemester;
-    }
-  };
-
-  const getRecommendedScale = () => {
-    let annualARS = calculateAnnualARS(alreadyHasTaxInscription);
-    return (
-      MONOTRIBUTO_SCALES.find((scale) => annualARS <= scale.limit) ||
-      MONOTRIBUTO_SCALES[MONOTRIBUTO_SCALES.length - 1]
-    );
-  };
-
-  const calculateMargin = () => {
-    const annualARS = calculateAnnualARS(alreadyHasTaxInscription);
-    const recommendedScale = getRecommendedScale();
-    const margin = recommendedScale.limit - annualARS;
-    const marginPercentage = (margin / recommendedScale.limit) * 100;
-    return { margin, marginPercentage };
-  };
-
-  /* Computed */
-  const recommendedScale = getRecommendedScale();
-  const { margin, marginPercentage } = calculateMargin();
-  const annualARS = calculateAnnualARS(false);
-
-  return {
-    monthlyIncome,
-    setMonthlyIncome,
-    setExchangeType,
-    exchangeType,
-    margin,
-    marginPercentage,
-    monthlyTax: recommendedScale.tax,
-    annualARS,
-    recommendedScale,
-  };
-};
+import { useMonotributoCalculator } from "./useMonotributoCalculator";
 
 export const MonotributoCalculator = () => {
-  const {
-    margin,
-    marginPercentage,
-    monthlyTax,
-    annualARS,
-    recommendedScale,
-    monthlyIncome,
-    setMonthlyIncome,
-    setExchangeType,
-    exchangeType,
-  } = useMonotributoCalculator();
+  const { margin, marginPercentage, monthlyTax, annualARS, recommendedScale } =
+    useMonotributoCalculator();
 
   return (
     <div className="space-y-8">
-      <SectionTitle />
+      <SectionTitle
+        title="Calculadora de Monotributo"
+        description="Obtene tu escala en base a tus ingresos"
+      />
 
       <HasTaxInscription />
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
-          <BillableData
-            monthlyIncome={monthlyIncome}
-            setMonthlyIncome={setMonthlyIncome}
-            setExchangeType={setExchangeType}
-            exchangeType={exchangeType}
-          />
+          <BillableData />
         </div>
 
         <div className="flex flex-col justify-between gap-8">
@@ -135,19 +53,6 @@ export const MonotributoCalculator = () => {
     </div>
   );
 };
-
-function SectionTitle() {
-  return (
-    <div>
-      <h2 className="text-2xl font-bold text-gray-900">
-        Calculadora de Monotributo
-      </h2>
-      <p className="text-gray-600 mt-1">
-        Obtene tu escala en base a tus ingresos
-      </p>
-    </div>
-  );
-}
 
 function TaxInformation({
   monthlyTax,

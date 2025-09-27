@@ -1,3 +1,4 @@
+import { FetchExchangeRates } from "@/hooks/useFetchExchangeRates";
 import { exchangeRatesAtom, loadingAtom } from "@/store/data";
 import { useAtomValue } from "jotai";
 import { Calculator, RefreshCw } from "lucide-react";
@@ -5,7 +6,7 @@ import { Calculator, RefreshCw } from "lucide-react";
 export const Header = ({
   fetchExchangeRates,
 }: {
-  fetchExchangeRates: () => void;
+  fetchExchangeRates: FetchExchangeRates;
 }) => {
   const exchangeRates = useAtomValue(exchangeRatesAtom);
   const isLoading = useAtomValue(loadingAtom);
@@ -35,7 +36,7 @@ export const Header = ({
               </span>
             </div>
             <button
-              onClick={fetchExchangeRates}
+              onClick={() => fetchExchangeRates({ abort: new AbortSignal() })}
               className="p-1 hover:bg-gray-100 rounded-full transition-colors"
               disabled={isLoading}
             >

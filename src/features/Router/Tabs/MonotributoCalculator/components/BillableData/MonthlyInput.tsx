@@ -1,36 +1,40 @@
-import { DollarSign } from "lucide-react";
-import { Dispatch, SetStateAction } from "react";
+import { InputMoneyFormat } from "@/components/InputMoneyFormat";
+import {
+  exchangeRatesAtom,
+  exchangeTypeAtom,
+  isCurrencyUSDAtom,
+  monthlyIncomeAtom,
+} from "@/store/data";
+import { useAtom, useAtomValue } from "jotai";
 
-export const MonthlyInput = ({
-  monthlyIncome,
-  setMonthlyIncome,
-}: {
-  monthlyIncome: string;
-  setMonthlyIncome: Dispatch<SetStateAction<string>>;
-}) => {
+export const MonthlyInput = () => {
+  const [monthlyIncome, setMonthlyIncome] = useAtom(monthlyIncomeAtom);
+  const isCurrencyUSD = useAtomValue(isCurrencyUSDAtom);
   return (
-    <div>
-      <label
-        htmlFor="monthlyIncome"
-        className="block text-sm font-medium text-gray-700 mb-2"
-      >
-        Cuanto facturas mensualmente?
-      </label>
-      <div className="relative">
-        <DollarSign className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-        <input
-          type="number"
-          id="monthlyIncome"
-          value={monthlyIncome}
-          onChange={(e) => setMonthlyIncome(e.target.value)}
-          className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-          placeholder="Ej: 2000"
-        />
-      </div>
-      <p className="text-sm text-gray-500 mt-1">
-        {/* Ingresa tu facturación promedio mensual en {selectedCurrency} */}
-        Ingresa tu facturación promedio mensual
-      </p>
+    <div className="grid grid-cols-[1fr_auto] items-center gap-2">
+      <InputMoneyFormat
+        label="Cuanto facturas mensualmente?"
+        description="Ingresa tu facturación promedio mensual"
+        value={monthlyIncome}
+        onChange={setMonthlyIncome}
+        id="monthlyIncome"
+      />
+      {isCurrencyUSD && <ShowValueInARS monthlyIncome={monthlyIncome} />}
     </div>
   );
 };
+
+function ShowValueInARS({ monthlyIncome }: { monthlyIncome: number }) {
+  const exchangeType = useAtomValue(exchangeTypeAtom);
+  const exchangeRates = useAtomValue(exchangeRatesAtom);
+  const rate = Intl.NumberFormat("es-AR", {
+    style: "currency",
+    currency: "ARS",
+  }).format(exchangeRates[exchangeType] * monthlyIncome);
+  return (
+    <p className="text-right text-sm text-green-700 font-[200] w-content">
+      <span className="font-[100] text-gray-500">en AR$</span>
+      <br /> {rate}
+    </p>
+  );
+}

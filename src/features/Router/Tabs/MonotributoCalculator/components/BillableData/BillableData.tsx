@@ -7,12 +7,7 @@ import { CurrencySelector } from "./CurrencySelector";
 import { ExchangeRateSelector } from "./ExchangeRateSelector";
 import { MonthlyInput } from "./MonthlyInput";
 
-const BillableData = ({
-  monthlyIncome,
-  setMonthlyIncome,
-  setExchangeType,
-  exchangeType,
-}: any) => {
+const BillableData = () => {
   const [currentScale, setCurrentScale] = useAtom(currentScaleAtom);
   const alreadyHasTaxInscription = useAtomValue(hasTaxInscriptionAtom);
   return (
@@ -24,15 +19,9 @@ const BillableData = ({
       <div className="space-y-6">
         <CurrencySelector />
         {alreadyHasTaxInscription && <BilledPastSemester />}
-        <MonthlyInput
-          monthlyIncome={monthlyIncome}
-          setMonthlyIncome={setMonthlyIncome}
-        />
+        <MonthlyInput />
 
-        <ExchangeRateSelector
-          setExchangeType={setExchangeType}
-          exchangeType={exchangeType}
-        />
+        <ExchangeRateSelector />
 
         <div>
           <label

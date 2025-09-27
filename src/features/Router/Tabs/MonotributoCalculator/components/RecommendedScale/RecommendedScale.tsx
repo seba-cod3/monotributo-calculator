@@ -1,3 +1,5 @@
+import { hasTaxInscriptionAtom } from "@/store/data";
+import { useAtomValue } from "jotai";
 import { getPercentageColor } from "lib/getPercentageColor";
 import { MonotributoScale } from "lib/monotributoScales";
 import { CheckCircle } from "lucide-react";
@@ -13,6 +15,7 @@ export const RecommendedScale = ({
   recommendedScale: MonotributoScale;
   annualARS: number;
 }) => {
+  const hasTaxInscription = useAtomValue(hasTaxInscriptionAtom);
   return (
     <div className="bg-white rounded-xl shadow-sm border p-6">
       <div className="flex items-center space-x-3 mb-4">
@@ -57,7 +60,14 @@ export const RecommendedScale = ({
             </span>
           </div>
           <div className="flex justify-between">
-            <span className="text-gray-600">Margen disponible:</span>
+            <span className="text-gray-600">
+              {margin < 0
+                ? "Facturación excedida por"
+                : hasTaxInscription
+                ? "Restante facturación"
+                : "Margen disponible"}
+              :
+            </span>
             <div
               className={`font-semibold w-full align-right grid justify-end ${getPercentageColor(
                 margin
