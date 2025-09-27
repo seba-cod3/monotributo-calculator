@@ -1,7 +1,8 @@
 import { CategoriaMonotributo } from "@/types/data";
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { MONOTRIBUTO_SCALES } from "lib/monotributoScales";
-import { currentScaleAtom } from "store/data";
+import { currentScaleAtom, hasTaxInscriptionAtom } from "store/data";
+import { BilledPastSemester } from "./BilledPastSemester";
 import { CurrencySelector } from "./CurrencySelector";
 import { ExchangeRateSelector } from "./ExchangeRateSelector";
 import { MonthlyInput } from "./MonthlyInput";
@@ -13,6 +14,7 @@ const BillableData = ({
   exchangeType,
 }: any) => {
   const [currentScale, setCurrentScale] = useAtom(currentScaleAtom);
+  const alreadyHasTaxInscription = useAtomValue(hasTaxInscriptionAtom);
   return (
     <div className="bg-white rounded-xl shadow-sm border p-6 h-full">
       <h3 className="text-lg font-semibold text-gray-900 mb-6">
@@ -21,6 +23,7 @@ const BillableData = ({
 
       <div className="space-y-6">
         <CurrencySelector />
+        {alreadyHasTaxInscription && <BilledPastSemester />}
         <MonthlyInput
           monthlyIncome={monthlyIncome}
           setMonthlyIncome={setMonthlyIncome}

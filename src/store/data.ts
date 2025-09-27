@@ -27,3 +27,8 @@ export const isCurrencyUSDAtom = atom(true, (get, set, nextValue?: boolean) => {
   const current = get(isCurrencyUSDAtom);
   set(isCurrencyUSDAtom, nextValue ?? !current);
 });
+
+
+export const hasTaxInscriptionAtom = atom(false);
+
+export const billedLastSemesterAtom = atom<number>(0);

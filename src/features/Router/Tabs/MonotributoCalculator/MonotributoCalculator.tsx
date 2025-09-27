@@ -1,9 +1,14 @@
-import { useAtomValue } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { useState } from "react";
 
 import { MONOTRIBUTO_SCALES } from "lib/monotributoScales";
 import { AlertTriangle } from "lucide-react";
-import { exchangeRatesAtom, isCurrencyUSDAtom } from "store/data";
+import {
+  billedLastSemesterAtom,
+  exchangeRatesAtom,
+  hasTaxInscriptionAtom,
+  isCurrencyUSDAtom,
+} from "store/data";
 
 import BillableData from "./components/BillableData";
 import { MonotributoScalesTable } from "./components/MonotributoScalesTable";
@@ -13,6 +18,8 @@ export const useMonotributoCalculator = () => {
   /* Suscriptions */
   const exchangeRates = useAtomValue(exchangeRatesAtom);
   const isCurrencyUSD = useAtomValue(isCurrencyUSDAtom);
+  const alreadyHasTaxInscription = useAtomValue(hasTaxInscriptionAtom);
+  const billedLastSemester = useAtomValue(billedLastSemesterAtom);
 
   /* States */
   const [monthlyIncome, setMonthlyIncome] = useState<string>("2000");
@@ -21,18 +28,26 @@ export const useMonotributoCalculator = () => {
   >("oficial");
 
   /* Functions */
-  const calculateAnnualARS = () => {
+  const calculateAnnualARS = (subtractAlreadyBilled = true) => {
     const monthlyValue = parseFloat(monthlyIncome) || 0;
     if (isCurrencyUSD) {
       const rate = exchangeRates[exchangeType] || 1;
-      return monthlyValue * rate * 12;
+      const annualValue = monthlyValue * rate * 12;
+      if (!subtractAlreadyBilled) {
+        return annualValue
+      }
+      return annualValue + billedLastSemester;
     } else {
-      return monthlyValue * 12;
+      const annualValue = monthlyValue * 12;
+      if (!subtractAlreadyBilled) {
+        return annualValue;
+      }
+      return annualValue + billedLastSemester;
     }
   };
 
   const getRecommendedScale = () => {
-    const annualARS = calculateAnnualARS();
+    let annualARS = calculateAnnualARS(alreadyHasTaxInscription);
     return (
       MONOTRIBUTO_SCALES.find((scale) => annualARS <= scale.limit) ||
       MONOTRIBUTO_SCALES[MONOTRIBUTO_SCALES.length - 1]
@@ -40,7 +55,7 @@ export const useMonotributoCalculator = () => {
   };
 
   const calculateMargin = () => {
-    const annualARS = calculateAnnualARS();
+    const annualARS = calculateAnnualARS(alreadyHasTaxInscription);
     const recommendedScale = getRecommendedScale();
     const margin = recommendedScale.limit - annualARS;
     const marginPercentage = (margin / recommendedScale.limit) * 100;
@@ -50,7 +65,7 @@ export const useMonotributoCalculator = () => {
   /* Computed */
   const recommendedScale = getRecommendedScale();
   const { margin, marginPercentage } = calculateMargin();
-  const annualARS = calculateAnnualARS();
+  const annualARS = calculateAnnualARS(false);
 
   return {
     monthlyIncome,
@@ -82,6 +97,7 @@ export const MonotributoCalculator = () => {
     <div className="space-y-8">
       <SectionTitle />
 
+      <HasTaxInscription />
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
           <BillableData
@@ -115,7 +131,6 @@ export const MonotributoCalculator = () => {
         </div>
       </div>
 
-      {/* Scales Table */}
       <MonotributoScalesTable recommendedScale={recommendedScale} />
     </div>
   );
@@ -206,6 +221,44 @@ function WarningCard({
         Exclusión del monotributo. Considera otras opciones como Responsable
         Inscripto, SRL, SAS.
       </p>
+    </div>
+  );
+}
+
+function HasTaxInscription() {
+  const [hasTaxInscription, setHasTaxInscription] = useAtom(
+    hasTaxInscriptionAtom
+  );
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <label
+        htmlFor="hasTaxInscription"
+        className="cursor-pointer p-4 bg-white rounded-xl shadow-sm border flex items-center gap-6"
+      >
+        <input
+          type="radio"
+          name="hasTaxInscription"
+          id="hasTaxInscription"
+          checked={hasTaxInscription}
+          onChange={() => setHasTaxInscription(true)}
+          className="w-4 h-4"
+        />
+        <div>Ya tengo monotributo</div>
+      </label>
+      <label
+        htmlFor="noTaxInscription"
+        className="cursor-pointer p-4 bg-white rounded-xl shadow-sm border flex items-center gap-6"
+      >
+        <input
+          type="radio"
+          name="noTaxInscription"
+          id="noTaxInscription"
+          checked={!hasTaxInscription}
+          onChange={() => setHasTaxInscription(false)}
+          className="w-4 h-4"
+        />
+        <div>No tengo monotributo</div>
+      </label>
     </div>
   );
 }

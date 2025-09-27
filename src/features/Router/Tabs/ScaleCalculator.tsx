@@ -8,11 +8,13 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { useState } from "react";
+import { CurrencySelector } from "./MonotributoCalculator/components/BillableData/CurrencySelector";
 
 export const ScaleCalculator = () => {
   const exchangeRates = useAtomValue(exchangeRatesAtom);
 
-  const [targetUSD, setTargetUSD] = useState<string>("3000");
+  const [targetUSD, setTargetUSD] = useState<string>("0");
+  const [billedLastSemester, setBilledLastSemester] = useState<string>("0");
   const [currentScale, setCurrentScale] = useState<string>("C");
   const [projectionMonths, setProjectionMonths] = useState<string>("12");
 
@@ -129,6 +131,8 @@ export const ScaleCalculator = () => {
   const projection = generateProjection();
   const monthlyUSD = parseFloat(targetUSD) || 0;
 
+  const JuneOrDecember = new Date().getMonth() >= 5 ? "Junio" : "Diciembre";
+
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -148,8 +152,24 @@ export const ScaleCalculator = () => {
             <h3 className="text-lg font-semibold text-gray-900 mb-6">
               Configuración de Proyección
             </h3>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <CurrencySelector />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label
+                  htmlFor="billedLastSemester"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Facturacion (AR$) desde {JuneOrDecember} a la fecha
+                </label>
+                <input
+                  type="number"
+                  id="billedLastSemester"
+                  value={billedLastSemester}
+                  onChange={(e) => setBilledLastSemester(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  placeholder="3000"
+                />
+              </div>
               <div>
                 <label
                   htmlFor="targetUSD"
