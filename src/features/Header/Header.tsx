@@ -23,7 +23,7 @@ export const Header = ({
                 MonotributoTech
               </h1>
               <p className="text-sm text-gray-500">
-                Calculadora para exportadores de servicios
+                Calculadora para exportadores de servicios digitales
               </p>
             </div>
           </div>

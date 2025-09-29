@@ -10,8 +10,14 @@ import { RecommendedScale } from "./components/RecommendedScale/RecommendedScale
 import { useMonotributoCalculator } from "./useMonotributoCalculator";
 
 export const MonotributoCalculator = () => {
-  const { margin, marginPercentage, monthlyTax, annualARS, recommendedScale } =
-    useMonotributoCalculator();
+  const {
+    margin,
+    marginPercentage,
+    monthlyTax,
+    annualARS,
+    referenceGrossARS,
+    recommendedScale,
+  } = useMonotributoCalculator();
 
   return (
     <div className="space-y-8">
@@ -32,6 +38,7 @@ export const MonotributoCalculator = () => {
             marginPercentage={marginPercentage}
             recommendedScale={recommendedScale}
             annualARS={annualARS}
+            referenceGrossARS={referenceGrossARS}
           />
 
           <TaxInformation
@@ -85,7 +92,9 @@ function TaxInformation({
           <div className="flex justify-between">
             <span className="text-gray-600">% sobre facturación:</span>
             <span className="font-semibold">
-              {((annualTax / annualARS) * 100).toFixed(2)}%
+              {annualARS > 0
+                ? `${((annualTax / annualARS) * 100).toFixed(2)}%`
+                : "-"}
             </span>
           </div>
         </div>

@@ -1,4 +1,4 @@
-import { hasTaxInscriptionAtom } from "@/store/data";
+import { currentScaleAtom, hasTaxInscriptionAtom } from "@/store/data";
 import { useAtomValue } from "jotai";
 import { getPercentageColor } from "lib/getPercentageColor";
 import { MonotributoScale } from "lib/monotributoScales";
@@ -9,13 +9,16 @@ export const RecommendedScale = ({
   marginPercentage,
   recommendedScale,
   annualARS,
+  referenceGrossARS,
 }: {
   margin: number;
   marginPercentage: number;
   recommendedScale: MonotributoScale;
   annualARS: number;
+  referenceGrossARS?: number;
 }) => {
   const hasTaxInscription = useAtomValue(hasTaxInscriptionAtom);
+  const currentScale = useAtomValue(currentScaleAtom);
   return (
     <div className="bg-white rounded-xl shadow-sm border p-6">
       <div className="flex items-center space-x-3 mb-4">
@@ -43,15 +46,36 @@ export const RecommendedScale = ({
               <div className="text-3xl font-bold text-green-600">
                 {recommendedScale.scale}
               </div>
-              <p className="text-sm text-green-700">Escala sugerida</p>
+              <p className="text-sm text-green-700">
+                {currentScale === recommendedScale.scale
+                  ? "Escala actual"
+                  : "Escala sugerida"}
+              </p>
             </>
           )}
         </div>
 
         <div className="space-y-2 text-sm">
           <div className="flex justify-between">
-            <span className="text-gray-600">Facturación anual:</span>
-            <span className="font-semibold">${annualARS.toLocaleString()}</span>
+            <span className="text-gray-600">
+              {hasTaxInscription
+                ? "Proyección final de semestre"
+                : "Facturación anual"}
+              :
+            </span>
+            {hasTaxInscription ? (
+              <span className="font-semibold">
+                ${referenceGrossARS?.toLocaleString() ?? "-"}
+              </span>
+            ) : annualARS ? (
+              <span className="font-semibold">
+                ${annualARS.toLocaleString()}
+              </span>
+            ) : (
+              <span className="font-light text-xs m-[auto,_0] text-right text-gray-500">
+                Ingresa una facturacion mensual
+              </span>
+            )}
           </div>
           <div className="flex justify-between">
             <span className="text-gray-600">Límite escala:</span>
