@@ -27,10 +27,13 @@ export const isCurrencyUSDAtom = atom(true, (get, set, nextValue?: boolean) => {
   set(isCurrencyUSDAtom, nextValue ?? !current);
 });
 
-export const hasTaxInscriptionAtom = atom(false);
+export const hasTaxInscriptionAtom = atomWithStorage(
+  "hasTaxInscription",
+  false
+);
 
-export const billedLastSemesterAtom = atom<number>(0);
-export const monthlyIncomeAtom = atom<number>(0);
+export const billedThisSemesterAtom = atomWithStorage("billedThisSemester", 0);
+export const monthlyIncomeAtom = atomWithStorage("monthlyIncome", 0);
 
 export const exchangeTypeAtom = atom<keyof DolaresParaCalculo>(
   "oficial" as const

@@ -17,8 +17,8 @@ const BillableData = () => {
       </h3>
 
       <div className="space-y-6">
-        <CurrencySelector />
         {hasTaxInscription && <BilledPastSemester />}
+        <CurrencySelector />
         <MonthlyInput />
 
         <ExchangeRateSelector />

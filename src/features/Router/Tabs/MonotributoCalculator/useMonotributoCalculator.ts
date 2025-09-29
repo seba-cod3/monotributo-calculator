@@ -2,7 +2,7 @@ import { useAtomValue } from "jotai";
 
 import { MONOTRIBUTO_SCALES } from "lib/monotributoScales";
 import {
-  billedLastSemesterAtom,
+  billedThisSemesterAtom,
   exchangeRatesAtom,
   exchangeTypeAtom,
   hasTaxInscriptionAtom,
@@ -20,7 +20,7 @@ export const useMonotributoCalculator = () => {
   const exchangeRates = useAtomValue(exchangeRatesAtom);
   const isCurrencyUSD = useAtomValue(isCurrencyUSDAtom);
   const alreadyHasTaxInscription = useAtomValue(hasTaxInscriptionAtom);
-  const billedLastSemester = useAtomValue(billedLastSemesterAtom);
+  const billedThisSemester = useAtomValue(billedThisSemesterAtom);
   const monthlyIncome = useAtomValue(monthlyIncomeAtom);
   const exchangeType = useAtomValue(exchangeTypeAtom);
 
@@ -54,7 +54,7 @@ export const useMonotributoCalculator = () => {
   const computeSemesterForecastGrossARS = () => {
     const monthsRemaining = getMonthsRemainingInCurrentSemester();
     const monthlyARS = getMonthlyIncomeInARS();
-    return billedLastSemester + monthlyARS * monthsRemaining;
+    return billedThisSemester + monthlyARS * monthsRemaining;
   };
 
   const getRecommendedScale = () => {

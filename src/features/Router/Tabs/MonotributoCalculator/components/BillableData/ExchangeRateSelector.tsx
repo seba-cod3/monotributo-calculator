@@ -7,6 +7,27 @@ import {
 import { useAtom, useAtomValue } from "jotai";
 import { ExternalLink } from "lucide-react";
 
+function TooltipContent({
+  text,
+  iconFalse,
+}: {
+  text: string;
+  iconFalse?: boolean;
+}) {
+  return (
+    <div className="absolute bottom-6 center hidden group-hover:block">
+      <div
+        className={`min-w-40 grid items-center gap-2 px-4 py-2 bg-slate-50 rounded-lg border border-gray-300 ${
+          !iconFalse ? "grid-cols-[minmax(130px,_280px),_20px]" : ""
+        }`}
+      >
+        <p className="text-md text-gray-500">{text}</p>
+        {!iconFalse && <ExternalLink className="w-3 h-3 justify-self-end" />}
+      </div>
+    </div>
+  );
+}
+
 function Tooltip({
   children,
   text,
@@ -18,16 +39,16 @@ function Tooltip({
 }) {
   return (
     <div className="relative group inline-block">
-      <div className="absolute bottom-6 center hidden group-hover:block">
-        <div className="min-w-40 grid grid-cols-[minmax(130px,_280px),_20px] items-center gap-2 px-4 py-2 bg-slate-50 rounded-lg border border-gray-300">
-          <p className="text-md text-gray-500">{text}</p>
-          {!iconFalse && <ExternalLink className="w-3 h-3 justify-self-end" />}
-        </div>
-      </div>
+      <TooltipContent text={text} iconFalse={iconFalse} />
       {children}
     </div>
   );
 }
+
+const BLUE_DOLLAR = {
+  label: "Dólar Blue",
+  desc: "Referencia mercado",
+};
 
 export const ExchangeRateSelector = () => {
   const isCurrencyUSD = useAtomValue(isCurrencyUSDAtom);
@@ -43,43 +64,38 @@ export const ExchangeRateSelector = () => {
           {
             key: "oficial",
             label: "BNA Oficial",
-            desc: "Facturación tipo E",
           },
           {
             key: "cripto",
             label: "Dólar Cripto",
-            desc: "Stablecoins",
-          },
-          {
-            key: "blue",
-            label: "Dólar Blue",
-            desc: "Referencia mercado",
           },
         ].map((option) => {
-          if (option.key === "oficial") {
-          }
           const rate = exchangeRates[option.key as keyof typeof exchangeRates];
           return (
             <button
               key={option.key}
               disabled={option.key === "blue"}
               onClick={() => setExchangeType(option.key as any)}
-              className={`p-3 rounded-lg border text-left transition-colors ${
-                option.key === "blue"
-                  ? "border-gray-100 disabled text-gray-500"
-                  : exchangeType === option.key
+              className={`flex flex-col justify-around p-3 rounded-lg border text-left transition-colors ${
+                exchangeType === option.key
                   ? "border-green-500 bg-green-50 text-green-700"
                   : "border-gray-300 hover:border-gray-400"
               }`}
             >
               <div className="font-medium text-sm">{option.label}</div>
-              <div className="text-xs text-gray-500 mt-1">{option.desc}</div>
               <div className="text-sm font-semibold mt-2">
                 ${rate?.toLocaleString() || "..."}
               </div>
             </button>
           );
         })}
+        <div className="p-3 rounded-lg border text-left transition-colors border-gray-100 disabled text-gray-500">
+          <div className="font-medium text-sm">{BLUE_DOLLAR.label}</div>
+          <div className="text-xs text-gray-500 mt-1">{BLUE_DOLLAR.desc}</div>
+          <div className="text-sm font-semibold mt-2">
+            ${exchangeRates["blue"]?.toLocaleString() || "..."}
+          </div>
+        </div>
       </div>
       <OpcionesDeFacturacionDoc />
     </div>
@@ -119,6 +135,8 @@ function TipoDeCambioDoc() {
             <a
               className="inline-block text-blue-500 hover:text-blue-700 underline hover-pointer"
               href="https://www.bcra.gob.ar/Pdfs/comytexord/A8330.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
             >
               comunicacion del <strong>BCRA "A" 8330</strong>
             </a>
@@ -129,6 +147,8 @@ function TipoDeCambioDoc() {
             <a
               className="inline-block text-blue-500 hover:text-blue-700 underline hover-pointer"
               href="https://blogdelcontador.com.ar/news-46233-exportaciones-de-servicios-como-cobrar-en-dolares-sin-limites-y-condiciones-del-nuevo-regimen-del-bcra"
+              target="_blank"
+              rel="noopener noreferrer"
             >
               sin que el banco te pida que los liquides
             </a>
@@ -148,6 +168,8 @@ function TipoDeCambioDoc() {
           <a
             className="inline-block text-blue-500 hover:text-blue-700 underline hover-pointer"
             href="https://www.arca.gob.ar/monotributo/categorias.asp#:~:text=Categ.-,Ingresos%20brutos%20(*),-Sup.%20Afectada%20(**)"
+            target="_blank"
+            rel="noopener noreferrer"
           >
             Ingreso Bruto
           </a>
@@ -157,6 +179,8 @@ function TipoDeCambioDoc() {
           <a
             className="inline-block text-blue-500 hover:text-blue-700 underline hover-pointer"
             href="https://monotributo.afip.gob.ar/"
+            target="_blank"
+            rel="noopener noreferrer"
           >
             su sitio
           </a>
