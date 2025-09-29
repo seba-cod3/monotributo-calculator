@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://monotributo-calculator.vercel.app/sitemap.xml
+
+# Allow all search engines to crawl the site
+# This is a public tool for monotributo calculations in Argentina
+# Helpful for developers and freelancers who need to calculate their tax obligations
+# Uses dolarapi.com to get the exchange rates
+# Uses AFIP scales to handle calculations
+
+# Common crawl delays (optional)
+Crawl-delay: 1
