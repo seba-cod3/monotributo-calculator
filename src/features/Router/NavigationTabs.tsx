@@ -1,10 +1,5 @@
-import {
-  ArrowRightLeft,
-  Calculator,
-  Menu,
-  TrendingUp,
-  X
-} from "lucide-react";
+import { ArrowRightLeft, Calculator, Menu, TrendingUp, X } from "lucide-react";
+import { usePostHog } from "posthog-js/react";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 const tabs = [
@@ -24,28 +19,7 @@ export const NavigationTabs = ({
   return (
     <>
       <nav className="hidden md:block bg-white border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="space-x-8 flex">
-            {tabs.map((tab) => {
-              const Icon = tab.icon;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center space-x-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-                    activeTab === tab.id
-                      ? "border-green-500 text-green-600"
-                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                  }`}
-                >
-                  <Icon className="h-4 w-4" />
-                  {/* <span className="hidden  sm:block">{tab.label}</span> */}
-                  <span className="ellipsis">{tab.label}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
+        <NavExpanded activeTab={activeTab} setActiveTab={setActiveTab} />
       </nav>
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="pt-4 block md:hidden">
@@ -56,6 +30,45 @@ export const NavigationTabs = ({
   );
 };
 
+function NavExpanded({
+  activeTab,
+  setActiveTab,
+}: {
+  activeTab: string;
+  setActiveTab: Dispatch<SetStateAction<string>>;
+}) {
+  const posthog = usePostHog();
+  return (
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="space-x-8 flex">
+        {tabs.map((tab) => {
+          const Icon = tab.icon;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => {
+                setActiveTab(tab.id);
+                posthog.capture("tabSeleccionado", {
+                  tabSeleccionado: tab.label,
+                });
+              }}
+              className={`flex items-center space-x-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                activeTab === tab.id
+                  ? "border-green-500 text-green-600"
+                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+              }`}
+            >
+              <Icon className="h-4 w-4" />
+              {/* <span className="hidden  sm:block">{tab.label}</span> */}
+              <span className="ellipsis">{tab.label}</span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function NavMenuContent({
   activeTab,
   setActiveTab,
@@ -65,14 +78,23 @@ function NavMenuContent({
 }) {
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleClick = (tabId: string) => {
+  const posthog = usePostHog();
+
+  const handleClick = (tabId: string, tabLabel: string) => {
     setIsOpen(false);
     setActiveTab(tabId);
+    posthog.capture("tabSeleccionado", {
+      tabSeleccionado: tabLabel,
+    });
   };
 
   const handleClickOutside = (e: MouseEvent) => {
     const navMenuContent = document.getElementById("nav-menu-content");
-    if (navMenuContent && !navMenuContent.contains(e.currentTarget as Node)) {
+    if (
+      e.currentTarget instanceof Node &&
+      navMenuContent &&
+      !navMenuContent.contains(e.currentTarget as Node)
+    ) {
       setIsOpen(false);
     }
   };
@@ -102,7 +124,7 @@ function NavMenuContent({
           {tabs.map((tab) => (
             <button
               key={tab.id}
-              onClick={() => handleClick(tab.id)}
+              onClick={() => handleClick(tab.id, tab.label)}
               className={`tracking-wide block w-full text-lg text-left ${
                 activeTab === tab.id
                   ? "text-green-600"

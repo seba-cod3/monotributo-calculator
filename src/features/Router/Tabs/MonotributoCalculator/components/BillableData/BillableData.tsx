@@ -1,6 +1,7 @@
 import { CategoriaMonotributo } from "@/types/data";
 import { useAtom, useAtomValue } from "jotai";
 import { MONOTRIBUTO_SCALES } from "lib/monotributoScales";
+import { usePostHog } from "posthog-js/react";
 import { currentScaleAtom, hasTaxInscriptionAtom } from "store/data";
 import { BilledPastSemester } from "./BilledPastSemester";
 import { CurrencySelector } from "./CurrencySelector";
@@ -33,6 +34,7 @@ const BillableData = () => {
 
 function CurrentScaleSelector() {
   const [currentScale, setCurrentScale] = useAtom(currentScaleAtom);
+  const posthog = usePostHog();
 
   return (
     <div>
@@ -45,9 +47,12 @@ function CurrentScaleSelector() {
       <select
         id="currentScale"
         value={currentScale}
-        onChange={(e) =>
-          setCurrentScale(e.target.value as CategoriaMonotributo)
-        }
+        onChange={(e) => {
+          setCurrentScale(e.target.value as CategoriaMonotributo);
+          posthog.capture("escalaActual", {
+            escalaActual: e.target.value,
+          });
+        }}
         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
       >
         <option value="">Seleccionar escala actual</option>

@@ -4,6 +4,7 @@ import {
   isCurrencyUSDAtom,
 } from "@/store/data";
 import { useAtom, useAtomValue } from "jotai";
+import { usePostHog } from "posthog-js/react";
 
 const BLUE_DOLLAR = {
   label: "Dólar Blue",
@@ -14,6 +15,8 @@ export const ExchangeRateSelector = () => {
   const isCurrencyUSD = useAtomValue(isCurrencyUSDAtom);
   const exchangeRates = useAtomValue(exchangeRatesAtom);
   const [exchangeType, setExchangeType] = useAtom(exchangeTypeAtom);
+  const posthog = usePostHog();
+
   if (!isCurrencyUSD) return null;
   return (
     <div>
@@ -36,7 +39,12 @@ export const ExchangeRateSelector = () => {
             <button
               key={option.key}
               disabled={option.key === "blue"}
-              onClick={() => setExchangeType(option.key as any)}
+              onClick={() => {
+                setExchangeType(option.key as any)
+                posthog.capture("tipoDeCambioSeleccionado", {
+                  tipoDeCambio: option.key,
+                })
+              }}
               className={`flex flex-col justify-around p-3 rounded-lg border text-left transition-colors ${
                 exchangeType === option.key
                   ? "border-green-500 bg-green-50 text-green-700"

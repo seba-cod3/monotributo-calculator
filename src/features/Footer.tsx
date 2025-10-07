@@ -9,6 +9,7 @@ export const Footer = () => {
             <Info className="h-4 w-4" />
             <span>
               Esta herramienta es solo informativa. Consulta con un contador.
+              Los valores mostrados son estimativos y no constituyen asesoramiento fiscal ni contable.
             </span>
           </div>
           <p className="text-sm text-gray-400">

@@ -4,6 +4,7 @@ import { AlertTriangle } from "lucide-react";
 import { hasTaxInscriptionAtom } from "store/data";
 
 import { SectionTitle } from "@/components/SectionTitle";
+import { usePostHog } from 'posthog-js/react';
 import BillableData from "./components/BillableData";
 import { MonotributoScalesTable } from "./components/MonotributoScalesTable";
 import { RecommendedScale } from "./components/RecommendedScale/RecommendedScale";
@@ -18,7 +19,6 @@ export const MonotributoCalculator = () => {
     referenceGrossARS,
     recommendedScale,
   } = useMonotributoCalculator();
-
   return (
     <div className="space-y-8">
       <SectionTitle
@@ -143,6 +143,7 @@ function HasTaxInscription() {
   const [hasTaxInscription, setHasTaxInscription] = useAtom(
     hasTaxInscriptionAtom
   );
+  const posthog = usePostHog();
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <label
@@ -154,7 +155,12 @@ function HasTaxInscription() {
           name="hasTaxInscription"
           id="hasTaxInscription"
           checked={hasTaxInscription}
-          onChange={() => setHasTaxInscription(true)}
+          onChange={() => {
+            setHasTaxInscription(true)
+            posthog?.capture("taxInscription", {
+              tieneMonotributo: true,
+            })
+          }}
           className="w-4 h-4"
         />
         <div>Ya tengo monotributo</div>
@@ -168,7 +174,12 @@ function HasTaxInscription() {
           name="noTaxInscription"
           id="noTaxInscription"
           checked={!hasTaxInscription}
-          onChange={() => setHasTaxInscription(false)}
+          onChange={() => {
+            setHasTaxInscription(false)
+            posthog?.capture("taxInscription", {
+              tieneMonotributo: false,
+            })
+          }}
           className="w-4 h-4"
         />
         <div>No tengo monotributo</div>

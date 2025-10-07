@@ -45,7 +45,6 @@ export const ExchangeRates = () => {
   const rates = useAtomValue(exchangeRatesAtom);
   const isLoading = useAtomValue(loadingAtom);
 
-  console.log("rates", rates);
   const calculateGap = (rate1: number, rate2: number) => {
     return (((rate1 - rate2) / rate2) * 100).toFixed(1);
   };

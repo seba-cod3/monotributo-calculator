@@ -1,5 +1,6 @@
 import { isCurrencyUSDAtom } from "@/store/data";
 import { useAtom } from "jotai";
+import { usePostHog } from "posthog-js/react";
 
 export const CurrencySelector = () => {
   const [isCurrencyUSD, toggleUSDCurrency] = useAtom(isCurrencyUSDAtom);
@@ -31,9 +32,18 @@ function CurrencyOption({
   selected: boolean;
   toggleUSDCurrency: () => void;
 }) {
+  const posthog = usePostHog();
+
+  const handleClick = () => {
+    if (selected) return;
+    toggleUSDCurrency()
+    posthog.capture("monedaSeleccionada", {
+      moneda: label,
+    });
+  }
   return (
     <button
-      onClick={() => !selected && toggleUSDCurrency()}
+      onClick={handleClick}
       className={`
       border border-gray-300 rounded-md p-2 transition-colors min-w-24 ${
         selected

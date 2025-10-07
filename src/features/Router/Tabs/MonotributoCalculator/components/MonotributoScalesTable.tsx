@@ -7,6 +7,7 @@ import {
   ChevronsDownUp,
   ChevronsLeftRightEllipsis,
 } from "lucide-react";
+import { usePostHog } from "posthog-js/react";
 import { useMemo, useState } from "react";
 
 export const MonotributoScalesTable = ({
@@ -151,7 +152,12 @@ function TableContent({
     };
   }, [scales.hiddenScales, currentScale, recommendedScale.scale]);
 
+  const posthog = usePostHog();
+
   const toggleSection = (section: "before" | "middle" | "after") => {
+    posthog.capture("expandirTablaDeEscalas", {
+      seccionExpandida: section,
+    });
     setExpandedSections((prev) => ({
       ...prev,
       [section]: !prev[section],
