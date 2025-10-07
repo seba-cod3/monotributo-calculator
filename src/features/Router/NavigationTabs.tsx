@@ -3,15 +3,14 @@ import {
   Calculator,
   Menu,
   TrendingUp,
-  Wallet,
-  X,
+  X
 } from "lucide-react";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 const tabs = [
   { id: "calculator", label: "Calculadora", icon: Calculator },
   { id: "rates", label: "Cotizaciones", icon: TrendingUp },
-  { id: "guide", label: "Guías de Cobro", icon: Wallet },
+  // { id: "guide", label: "Guías de Cobro", icon: Wallet },
   { id: "scales", label: "Escalas", icon: ArrowRightLeft },
 ];
 

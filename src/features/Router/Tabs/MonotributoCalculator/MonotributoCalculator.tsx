@@ -132,8 +132,8 @@ function WarningCard({
         <span className="font-medium text-yellow-800">Alerta</span>
       </div>
       <p className="text-sm text-yellow-700">
-        Exclusión del monotributo. Considera otras opciones como Responsable
-        Inscripto, SRL, SAS.
+        Exclusión del monotributo. Consulta con tu Contador y considera otras opciones como Responsable
+        Inscripto, S.R.L., S.A.S. o S.A.
       </p>
     </div>
   );

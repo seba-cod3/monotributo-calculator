@@ -8,7 +8,6 @@ import { ExchangeRateSelector } from "./ExchangeRateSelector";
 import { MonthlyInput } from "./MonthlyInput";
 
 const BillableData = () => {
-  const [currentScale, setCurrentScale] = useAtom(currentScaleAtom);
   const hasTaxInscription = useAtomValue(hasTaxInscriptionAtom);
   return (
     <div className="bg-white rounded-xl shadow-sm border p-6 h-full">
@@ -17,40 +16,49 @@ const BillableData = () => {
       </h3>
 
       <div className="space-y-6">
-        {hasTaxInscription && <BilledPastSemester />}
-        <CurrencySelector />
+        {hasTaxInscription && (
+          <>
+            <CurrentScaleSelector />
+            <BilledPastSemester />
+          </>
+        )}
         <MonthlyInput />
+        <CurrencySelector />
 
         <ExchangeRateSelector />
-
-        {hasTaxInscription && (
-          <div>
-            <label
-              htmlFor="currentScale"
-              className="block text-sm font-medium text-gray-700 mb-2"
-            >
-              Escala actual (opcional)
-            </label>
-            <select
-              id="currentScale"
-              value={currentScale}
-              onChange={(e) =>
-                setCurrentScale(e.target.value as CategoriaMonotributo)
-              }
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-            >
-              <option value="">Seleccionar escala actual</option>
-              {MONOTRIBUTO_SCALES.map((scale) => (
-                <option key={scale.scale} value={scale.scale}>
-                  Escala {scale.scale} - ${scale.tax.toLocaleString()}/mes
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
       </div>
     </div>
   );
 };
+
+function CurrentScaleSelector() {
+  const [currentScale, setCurrentScale] = useAtom(currentScaleAtom);
+
+  return (
+    <div>
+      <label
+        htmlFor="currentScale"
+        className="block text-sm font-medium text-gray-700 mb-2"
+      >
+        Escala actual
+      </label>
+      <select
+        id="currentScale"
+        value={currentScale}
+        onChange={(e) =>
+          setCurrentScale(e.target.value as CategoriaMonotributo)
+        }
+        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+      >
+        <option value="">Seleccionar escala actual</option>
+        {MONOTRIBUTO_SCALES.map((scale) => (
+          <option key={scale.scale} value={scale.scale}>
+            Escala {scale.scale} - ${scale.tax.toLocaleString()}/mes
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}
 
 export default BillableData;

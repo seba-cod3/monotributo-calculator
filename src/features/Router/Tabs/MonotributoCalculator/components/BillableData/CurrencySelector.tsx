@@ -6,9 +6,6 @@ export const CurrencySelector = () => {
 
   return (
     <div className="space-y-6">
-      <h3 className="text-sm font-medium text-gray-700 mb-2">
-        Facturas en dolares o pesos?
-      </h3>
       <div className="grid grid-cols-2 gap-4 w-full">
         <CurrencyOption
           label="USD"

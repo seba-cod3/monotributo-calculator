@@ -18,7 +18,8 @@ export const MonthlyInput = () => {
         value={monthlyIncome}
         onChange={setMonthlyIncome}
         id="monthlyIncome"
-      />
+        placeholder="527.000"
+        />
       {isCurrencyUSD && <ShowValueInARS monthlyIncome={monthlyIncome} />}
     </div>
   );

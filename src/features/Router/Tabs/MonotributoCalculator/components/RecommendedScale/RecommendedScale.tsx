@@ -34,9 +34,6 @@ export const RecommendedScale = ({
         <div className="text-center p-4 bg-green-50 rounded-lg">
           {margin < 0 ? (
             <>
-              <div className="text-xl font-bold text-red-600">
-                Responsable inscripto
-              </div>
               <p className="text-sm text-red-700">
                 El monto supera el limite del monotributo
               </p>
